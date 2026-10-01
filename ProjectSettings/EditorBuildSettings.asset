@@ -5,16 +5,18 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MainGameAR_Foundation.unity
     guid: 7973d7dc4931b614d832c6e137b466dc
   - enabled: 0
     path: Assets/Scenes/MainGameAR_Standalone.unity
     guid: 2010f4f0a7e2044cb83cf0955536c7ad
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MainGameAR_ARDK.unity
     guid: c5f77003b0fe1bd40a14ab5cf907df16
   m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 958efc67ba2054751993683c918840c0,
+      type: 2}
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 71c48ec3778e4480d86c48d9c5aee187,
       type: 2}
     UnityEditor.XR.ARKit.ARKitSettings: {fileID: 11400000, guid: 65fcf88b9a68a45389eb4c4ca741cf05,
@@ -22,4 +24,8 @@ EditorBuildSettings:
     com.unity.input.settings: {fileID: 11400000, guid: 43657db28d16342ababac5a47414ad70,
       type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: eff17a025b48348c69d1cf6083772b32,
+      type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 6756a7fe3fde34b879ae3ca092209911,
+      type: 2}
+    xr.sdk.mock-hmd.settings: {fileID: 11400000, guid: 5fe1dfa5f73a24715b1000bbda1e5282,
       type: 2}

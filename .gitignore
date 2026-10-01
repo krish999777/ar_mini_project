@@ -40,3 +40,6 @@ sysinfo.txt
 
 Packages/com.kyrylokuzyk.arfoundationremote
 ARFoundationRemoteCompanionApp/
+
+UserSettings/
+*.log

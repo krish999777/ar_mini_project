@@ -506,7 +506,7 @@ namespace Niantic.ARDK.AR
           _videoFullDoubleBuffer[i].Create();
         }
 
-        _videoFullAlias.Resize(_videoFullDoubleBuffer[0].width, _videoFullDoubleBuffer[0].height);
+        _videoFullAlias.Reinitialize(_videoFullDoubleBuffer[0].width, _videoFullDoubleBuffer[0].height);
         _videoFullAlias.UpdateExternalTexture(_videoFullDoubleBuffer[0].GetNativeTexturePtr());
         // The placeholder is no longer necessary, so clean it up.
         UnityEngine.Object.Destroy(_videoFullAliasPlaceholder);
