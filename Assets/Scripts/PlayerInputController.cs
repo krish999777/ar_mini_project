@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using LearnXR.Controllers;
 
@@ -26,7 +26,6 @@ public class PlayerInputController : MonoBehaviour, PlayerControls.IPlayerAction
     {
         if(carController == null) 
         {
-            Logger.Instance.LogInfo("CarController is null...");
             return;
         }
 

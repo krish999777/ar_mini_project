@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using DilmerGames.Core.Singletons;
 using UnityEngine;
 using UnityEngine.Events;
@@ -37,7 +37,8 @@ public class PlayerMissionManager : Singleton<PlayerMissionManager>
     {
         get
         {
-            return currentMission.PlayerItems.Any(c => c.ItemType == ItemType.Car && 
+            return currentMission != null && currentMission.PlayerItems != null && 
+                currentMission.PlayerItems.Any(c => c.ItemType == ItemType.Car && 
                 c.PlacementState == PlacementState.Placed);
         }
     }
