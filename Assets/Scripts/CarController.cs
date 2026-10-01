@@ -1,4 +1,4 @@
-﻿using DilmerGames.Core.Singletons;
+using DilmerGames.Core.Singletons;
 using TMPro;
 using UnityEngine;
 
@@ -45,7 +45,11 @@ public class CarController : Singleton<CarController>
     void Awake()
     {
         wheels = GetComponentsInChildren<CarWheel>();
-        FindObjectOfType<PlayerInputController>().Bind(this);
+        var input = FindObjectOfType<PlayerInputController>();
+        if (input != null)
+        {
+            input.Bind(this);
+        }
     }
 
     void Update()

@@ -448,7 +448,7 @@ GameObject:
   - component: {fileID: 658295625}
   m_Layer: 0
   m_Name: AR Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -691,6 +691,7 @@ MonoBehaviour:
   playerMissions:
   - {fileID: 11400000, guid: ee4a7d5b8d1fc406c89ac306ab850e5e, type: 2}
   currentMissionNum: 0
+  mainCamera: {fileID: 658295620}
 --- !u!1 &1215479587
 GameObject:
   m_ObjectHideFlags: 0

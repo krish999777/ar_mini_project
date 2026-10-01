@@ -31,7 +31,31 @@ public class PlayerMissionManager : Singleton<PlayerMissionManager>
         }
     }
 
-    private void Awake() => StartMission();
+    private void Awake() 
+    {
+        EnsureMainCamera();
+        StartMission();
+    }
+
+    public void EnsureMainCamera()
+    {
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+            if (mainCamera == null)
+            {
+                var origin = FindObjectOfType<UnityEngine.XR.ARFoundation.ARSessionOrigin>();
+                if (origin != null && origin.camera != null)
+                {
+                    mainCamera = origin.camera;
+                }
+                else
+                {
+                    mainCamera = FindObjectOfType<Camera>();
+                }
+            }
+        }
+    }
 
     public bool CarWasPlaced
     {
@@ -66,6 +90,8 @@ public class PlayerMissionManager : Singleton<PlayerMissionManager>
 
     void CheckPlacementMissionStatus()
     {
+        EnsureMainCamera();
+
         if(currentMission.PlayerItems.All(s => s.PlacementState == PlacementState.Placed))
         {
             return;

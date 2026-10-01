@@ -29,21 +29,59 @@ public class ARPlacementReticle : MonoBehaviour
 
     private float searchTimer = 0f;
 
+    private Camera GetCamera()
+    {
+        if (mainCamera != null) return mainCamera;
+
+        mainCamera = Camera.main;
+        if (mainCamera == null)
+        {
+            var origin = FindObjectOfType<ARSessionOrigin>();
+            if (origin != null && origin.camera != null)
+            {
+                mainCamera = origin.camera;
+            }
+        }
+        if (mainCamera == null)
+        {
+            mainCamera = FindObjectOfType<Camera>();
+        }
+        return mainCamera;
+    }
+
+    private void EnsureReticle()
+    {
+        if (customReticle != null) return;
+
+        var prefab = Resources.Load<GameObject>("Prefabs/Reticle");
+        if (prefab != null)
+        {
+            customReticle = Instantiate(prefab);
+            customReticle.transform.parent = transform;
+            customReticle.transform.position = Vector3.zero;
+            customReticle.SetActive(false);
+            reticleOverlayText = customReticle.GetComponentInChildren<TextMeshProUGUI>();
+        }
+        else
+        {
+            customReticle = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            customReticle.name = "FallbackReticle";
+            customReticle.transform.parent = transform;
+            customReticle.transform.localScale = new Vector3(0.6f, 0.005f, 0.6f);
+            var col = customReticle.GetComponent<Collider>();
+            if (col != null) Destroy(col);
+            customReticle.SetActive(false);
+        }
+    }
+
     void Awake()
     {
-        customReticle = Instantiate(Resources.Load<GameObject>("Prefabs/Reticle"));
-        customReticle.transform.parent = transform;
-        customReticle.transform.position = Vector3.zero;
-        customReticle.SetActive(false);
-        reticleOverlayText = customReticle.GetComponentInChildren<TextMeshProUGUI>();
+        EnsureReticle();
     }
 
     void Start()
     {
-        if (mainCamera == null)
-        {
-            mainCamera = Camera.main;
-        }
+        GetCamera();
 
         arRaycastManager = FindObjectOfType<ARRaycastManager>();
         if (arRaycastManager == null)
@@ -60,11 +98,14 @@ public class ARPlacementReticle : MonoBehaviour
     {
         if (placedObject.Placement != null || objectPlaced) return;
 
-        if (mainCamera == null)
+        Camera cam = GetCamera();
+        if (cam == null)
         {
-            mainCamera = Camera.main;
-            if (mainCamera == null) return;
+            Logger.Instance.LogInfo("Searching for Camera...");
+            return;
         }
+
+        EnsureReticle();
 
         bool hasHit = false;
         Vector3 hitPoint = Vector3.zero;
@@ -88,7 +129,7 @@ public class ARPlacementReticle : MonoBehaviour
         // 2. Physics Raycast against LiDAR layer or floor colliders
         if (!hasHit)
         {
-            var ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
+            var ray = new Ray(cam.transform.position, cam.transform.forward);
             int lidarMask = LayerMask.GetMask(RAYCAST_LAYER);
             if (lidarMask != 0 && Physics.Raycast(ray, out var hit, 10, lidarMask))
             {
@@ -109,7 +150,7 @@ public class ARPlacementReticle : MonoBehaviour
         // 4. Fallback: Physics raycast against ANY scene collider (e.g. driving surface or room bounds)
         if (!hasHit)
         {
-            var ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
+            var ray = new Ray(cam.transform.position, cam.transform.forward);
             if (Physics.Raycast(ray, out var hit, 10, ~LayerMask.GetMask("UI", "Ignore Raycast")))
             {
                 hitPoint = hit.point;
@@ -118,25 +159,25 @@ public class ARPlacementReticle : MonoBehaviour
             }
         }
 
-        // 5. Intelligent Fallback: If device is still scanning after 2 seconds, project a comfortable placement plane 1.5m ahead
+        // 5. Responsive Fallback: If device has not found a plane yet after 0.5s, project 1.5m in front of camera
         if (!hasHit)
         {
             searchTimer += Time.deltaTime;
-            if (searchTimer > 2.0f)
+            if (searchTimer > 0.5f)
             {
-                Vector3 forwardFlat = mainCamera.transform.forward;
+                Vector3 forwardFlat = cam.transform.forward;
                 forwardFlat.y = 0;
                 if (forwardFlat.sqrMagnitude < 0.01f) forwardFlat = Vector3.forward;
                 forwardFlat.Normalize();
 
-                hitPoint = mainCamera.transform.position + forwardFlat * 1.5f + Vector3.down * 0.8f;
+                hitPoint = cam.transform.position + forwardFlat * 1.5f + Vector3.down * 0.8f;
                 hitNormal = Vector3.up;
                 hasHit = true;
             }
             else
             {
                 customReticle.SetActive(false);
-                Logger.Instance.LogInfo("Move phone to detect floor...");
+                Logger.Instance.LogInfo("Aim at floor to detect surface...");
                 return;
             }
         }
